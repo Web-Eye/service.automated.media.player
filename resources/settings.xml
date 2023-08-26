@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings version="1">
+    <section id="service.automated.media.player">
+        <category id="main" label="30000">
+            <group id="1">
+                <setting id="enabled" type="boolean" label="30001" help="">
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="watched_folder" type="string" label="30002" help="">
+                    <default>smb path</default>
+                    <constraints>
+                        <allowempty>false</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>30002</heading>
+                    </control>
+                </setting>
+            </group>
+        </category>
+    </section>
+</settings>
