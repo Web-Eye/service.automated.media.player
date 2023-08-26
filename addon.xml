@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon
+    id="service.automated.media.player"
+    version="1.0.0+Beta"
+    name="Automated Media Player Service"
+    provider-name="WebEye">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+
+  <extension point="xbmc.service" library="main.py"/>
+  <extension point="xbmc.addon.metadata">
+    <language>en</language>
+    <platform>all</platform>
+    <license>GPL-3.0-only</license>
+    <website>https://github.com/Web-Eye/service.automated.media.player</website>
+    <source>https://github.com/Web-Eye/service.automated.media.player</source>
+    <summary lang="de">Some autoplay stuff....</summary>
+    <summary lang="en">Some autoplay stuff....</summary>
+    <disclaimer lang="en_GB">Use at your own risk. Post suggestions, improvements or bug reports directly to GitHub.</disclaimer>
+    <disclaimer lang="de_DE">Benutzung auf eigene Gefahr. Anregungen, Verbesserungen oder Bugs bitte direkt über GitHub posten.</disclaimer>
+    <!--<assets>
+      <icon>resources/assets/icon.jpg</icon>
+      <fanart>resources/assets/fanart.jpg</fanart>
+    </assets>-->
+    <news>
+    </news>
+  </extension>
+
+</addon>
