@@ -32,6 +32,7 @@ class Utils:
     def exists(path):
         return xbmcvfs.exists(path)
 
+    @staticmethod
     def listdir(path):
         return xbmcvfs.listdir(path)
 

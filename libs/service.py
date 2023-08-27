@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-import sys
+import os.path
+import pathlib
 
 from libs.kodion.gui_manager import *
 from libs.kodion.addon import Addon
@@ -32,6 +32,7 @@ class service:
         self._DEFAULT_IMAGE_URL = ''
 
         self._tmpDirectory = 'special://masterprofile/addon_data/service.automated.media.player/temp'
+        self._watchedDirectory = self._addon.getSetting('watched_folder')
 
         self._guiManager = GuiManager(0, self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)
 
@@ -40,24 +41,69 @@ class service:
         if not kodionUtils.exists(self._tmpDirectory):
             kodionUtils.mkdir(self._tmpDirectory)
 
-    def showMedia(self):
-        if kodionUtils.exists(self._tmpDirectory):
-            pass
+
+    @staticmethod
+    def showPicture(media):
+        xbmc.executebuiltin('ShowPicture(' + media + ')')
+
+    @staticmethod
+    def showVideo(media):
+        pass
+
+    @staticmethod
+    def getMediaType(media):
+        suffix = pathlib.Path(media).suffix.lower()
+        if suffix in ['.apng', '.bmp', '.cbz', '.gif', '.ico', '.jp2', '.jpg', '.jpeg', '.pcx', '.png', '.rs0s', '.tga',
+                      '.tif', '.tiff', '.webp', '.zip', '.arw', '.cr2', '.dng', '.nef', '.mpo']:
+            return 1
+        elif suffix in ['.avi', '.mpeg', '.wmv', '.asf', '.flv', '.mkv', '.mka', '.mp4', '.m4a', '.aac', '.nut', '.ogg',
+                        '.ogm', '.3gp', '.vivo', '.pva', '.nuv', '.nsv', '.nsa', '.fli', '.flc', '.wtv', '.trp' '.f4v']:
+            return 2
+
+        return 0
+
+    def getCatchedMedia(self):
+        return self._addon.getSetting('catched_media')
+
+    def showMedia(self, media):
+        if bool(media) and kodionUtils.exists(media):
+            mediaType = self.getMediaType(media)
+            {
+                1: self.showPicture,
+                2: self.showVideo
+            }[mediaType](media)
+
+    def getNewMedia(self, default):
+        dirs, files = kodionUtils.listdir(self._watchedDirectory)
+
+        if files is not None and len(files) > 0:
+            for file in files:
+                srcFile = os.path.join(self._watchedDirectory, file)
+                if kodionUtils.exists(srcFile) and self.getMediaType(srcFile) != 0:
+                    dstFile = os.path.join(self._tmpDirectory, file)
+                    # TODO: check if old media has the same filename
+                    if kodionUtils.copy(srcFile, dstFile):
+                        kodionUtils.delete(srcFile)
+                        self._addon.setSetting('catched_media', dstFile)
+                        return dstFile
+
+        return default
 
     def DoSome(self):
 
-        if self._addon.getSetting('enabled') == 'true':
-            # TODO: search for new media
+        media = self.getCatchedMedia()
 
-            self.showMedia()
+        if self._addon.getSetting('enabled') == 'true':
+            media = self.getNewMedia(media)
+            self.showMedia(media)
+            # TODO: DELETE old catched files
 
         while not self._MONITOR.abortRequested():
 
             if self._addon.getSetting('enabled') == 'true':
-                pass
-                # TODO: search for new media
-
-                # xbmc.executebuiltin('ShowPicture(https://images.pexels.com/photos/16226606/pexels-photo-16226606/free-photo-of-sonnenuntergang-wolkenkratzer-reflektierung-dammerung.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load)')
+                media = self.getNewMedia(None)
+                self.showMedia(media)
+                # TODO: DELETE old catched files
 
             if self._MONITOR.waitForAbort(10):
                 break
