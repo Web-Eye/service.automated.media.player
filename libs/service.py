@@ -31,20 +31,25 @@ class service:
         self._FANART = ''
         self._DEFAULT_IMAGE_URL = ''
 
-        self._tmpDirectory = 'special://masterprofile/addon_data/service.automated.media.player/temp'
+        # self._tmpDirectory = 'special://masterprofile/addon_data/service.automated.media.player/temp'
+        self._defaultImage = f'special://home/addons/{self._ADDON_ID}/resources/assets/logotipo.png'
+        self._addonIcon = f'special://home/addons/{self._ADDON_ID}/resources/assets/icon.jpeg'
         self._watchedDirectory = self._addon.getSetting('watched_folder')
 
         self._guiManager = GuiManager(0, self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)
 
         self._MONITOR = self._guiManager.getMonitor()
 
-        if not kodionUtils.exists(self._tmpDirectory):
-            kodionUtils.mkdir(self._tmpDirectory)
+        # if not kodionUtils.exists(self._tmpDirectory):
+        #     kodionUtils.mkdir(self._tmpDirectory)
 
 
     @staticmethod
     def showPicture(media):
         xbmc.executebuiltin('ShowPicture(' + media + ')')
+
+    def startSlideShow(self):
+        xbmc.executebuiltin('SlideShow(' + self._watchedDirectory + ')')
 
     @staticmethod
     def showVideo(media):
@@ -62,48 +67,47 @@ class service:
 
         return 0
 
-    def getCatchedMedia(self):
-        return self._addon.getSetting('catched_media')
+    def showMedia(self, mediaCount, image):
+        self._guiManager.setToastNotification('OttComputer Holistic', 'Updating resources...', 3000, self._addonIcon)
+        if mediaCount == 0:
+            self.showPicture(self._defaultImage)
+        elif mediaCount == 1:
+            self.showPicture(image)
+        else:
+            self.startSlideShow()
 
-    def showMedia(self, media):
-        if bool(media) and kodionUtils.exists(media):
-            mediaType = self.getMediaType(media)
-            {
-                1: self.showPicture,
-                2: self.showVideo
-            }[mediaType](media)
-
-    def getNewMedia(self, default):
+    def getNewMedia(self):
         dirs, files = kodionUtils.listdir(self._watchedDirectory)
-
+        hashValue = '^default^'
+        count = 0
+        retFile = None
         if files is not None and len(files) > 0:
+            hashValue = ''
             for file in files:
                 srcFile = os.path.join(self._watchedDirectory, file)
-                if kodionUtils.exists(srcFile) and self.getMediaType(srcFile) != 0:
-                    dstFile = os.path.join(self._tmpDirectory, file)
-                    # TODO: check if old media has the same filename
-                    if kodionUtils.copy(srcFile, dstFile):
-                        kodionUtils.delete(srcFile)
-                        self._addon.setSetting('catched_media', dstFile)
-                        return dstFile
+                if kodionUtils.exists(srcFile) and self.getMediaType(srcFile) == 1:
+                    retFile = srcFile
+                    hashValue += file + '^'
+                    count += 1
 
-        return default
+        return hashValue, retFile, count
 
     def DoSome(self):
-
-        media = self.getCatchedMedia()
+        _hash = None
 
         if self._addon.getSetting('enabled') == 'true':
-            media = self.getNewMedia(media)
-            self.showMedia(media)
-            # TODO: DELETE old catched files
+            tmpHash, image, mediaCount = self.getNewMedia()
+            if _hash is None or _hash != tmpHash:
+                _hash = tmpHash
+                self.showMedia(mediaCount, image)
 
         while not self._MONITOR.abortRequested():
 
             if self._addon.getSetting('enabled') == 'true':
-                media = self.getNewMedia(None)
-                self.showMedia(media)
-                # TODO: DELETE old catched files
+                tmpHash, image, mediaCount = self.getNewMedia()
+                if _hash is None or _hash != tmpHash:
+                    _hash = tmpHash
+                    self.showMedia(mediaCount, image)
 
             if self._MONITOR.waitForAbort(10):
                 break
