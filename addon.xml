@@ -19,10 +19,10 @@
     <summary lang="en">Some autoplay stuff....</summary>
     <disclaimer lang="en_GB">Use at your own risk. Post suggestions, improvements or bug reports directly to GitHub.</disclaimer>
     <disclaimer lang="de_DE">Benutzung auf eigene Gefahr. Anregungen, Verbesserungen oder Bugs bitte direkt über GitHub posten.</disclaimer>
-    <!--<assets>
-      <icon>resources/assets/icon.jpg</icon>
-      <fanart>resources/assets/fanart.jpg</fanart>
-    </assets>-->
+    <assets>
+      <icon>resources/assets/icon.jpeg</icon>
+      <fanart>resources/assets/logotipo.png</fanart>
+    </assets>
     <news>
     </news>
   </extension>
