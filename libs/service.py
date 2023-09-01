@@ -32,10 +32,19 @@ class service:
         self._DEFAULT_IMAGE_URL = ''
 
         # self._tmpDirectory = 'special://masterprofile/addon_data/service.automated.media.player/temp'
-        self._defaultImage = f'special://home/addons/{self._ADDON_ID}/resources/assets/logotipo.png'
-        self._addonIcon = f'special://home/addons/{self._ADDON_ID}/resources/assets/icon.jpeg'
+
+        self._addonIcon = f'special://home/addons/{self._ADDON_ID}/resources/assets/isotye.png'
         self._watchedDirectory = self._addon.getSetting('watched_folder')
 
+        width = getScreenWidth()
+        if width >= 2160:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/2160p/logo_4k.png'
+        elif width >= 1080:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/1080p/logo_1080p.png'
+        else:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/720p/logo_720o.png'
+
+        self._defaultImage = fanart
         self._guiManager = GuiManager(0, self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)
 
         self._MONITOR = self._guiManager.getMonitor()

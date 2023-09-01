@@ -20,8 +20,8 @@
     <disclaimer lang="en_GB">Use at your own risk. Post suggestions, improvements or bug reports directly to GitHub.</disclaimer>
     <disclaimer lang="de_DE">Benutzung auf eigene Gefahr. Anregungen, Verbesserungen oder Bugs bitte direkt über GitHub posten.</disclaimer>
     <assets>
-      <icon>resources/assets/icon.jpeg</icon>
-      <fanart>resources/assets/logotipo.png</fanart>
+      <icon>resources/assets/isotye.png</icon>
+      <fanart>resources/assets/1080p/logo_1080p.png</fanart>
     </assets>
     <news>
     </news>
